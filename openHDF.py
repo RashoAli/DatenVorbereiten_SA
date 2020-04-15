@@ -5,13 +5,15 @@ import matplotlib.pyplot as plt
 import math
 import cv2
 
-folder_name = "E_vonHinten_ohneSchulterstütze"
+folder_name = "E_vonHinten_mitSchulterstütze"
 path, dirs, files = next(os.walk(folder_name))
 file_count = len(files)
 
 depth_array = []
 ir_array = []
 registered_array = []
+
+blank_image = np.zeros((512, 424, 3), np.uint8)  # blank im ge if the frame don#t exists
 
 for i in range(0, file_count):
     file_name = folder_name + "/1_" + str(i) + ".hdf"
@@ -40,17 +42,18 @@ for i in range(0, file_count):
 
             # append data to te list
             registered_array.append(cv2_registered)
-
-        except:
+        except:  # if the image don't exists put a blankImage to have the wright number of frames
             print("jumped frame", i)
-
+            registered_array.append(blank_image)
     except:
         print("file cant be opened", file_name)
-out_registered = cv2.VideoWriter(str("extractedVideos/"+folder_name + '_registered.avi'), cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+        registered_array.append(blank_image)
+
+out_registered = cv2.VideoWriter(str("extractedVideos/" + folder_name + '_registered.avi'),
+                                 cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
 for i in range(len(registered_array)):
     print(i)
     image = cv2.cvtColor(registered_array[i], cv2.COLOR_BGR2RGB)
     out_registered.write(image)
 
 out_registered.release()
-
