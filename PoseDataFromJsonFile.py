@@ -3,7 +3,6 @@ import json
 import numpy as np
 import os
 import glob
-import matplotlib.pyplot as plt
 
 
 def XYZ_Of_Joints_saveIn_npy(hdf_path, json_path, npy_dir):
@@ -27,7 +26,7 @@ def XYZ_Of_Joints_saveIn_npy(hdf_path, json_path, npy_dir):
                 for i in range(0, 36):
                     data_array[i, j] = array[i]
         j += 1
-    print(data)
+
     XYZ_joints = np.zeros((18 * 3, frame_num))  # 18 joints (x,y,z) => 18*3 points
     for i in range(0, hdf_file_count):
         file_name = os.path.join(hdf_path, "1_" + str(i) + ".hdf")
@@ -64,7 +63,7 @@ def XYZ_Of_Joints_saveIn_npy(hdf_path, json_path, npy_dir):
 
 if __name__ == '__main__':
     # define folder path
-    video_name = "E_vonHinten_ohneSchulterstütze_registered"
+    video_name = "E_vonHinten_ohneSchulterstütze"
     hdf_name = "E_vonHinten_ohneSchulterstütze"
     json_path = os.path.join("JsonFiles", video_name, "*.json")
     hdf_path = os.path.join("hdfFiles", hdf_name)

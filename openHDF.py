@@ -14,9 +14,9 @@ def Open_hdf_get_video(folder_name, saveToPath):
 
     blank_image = np.zeros((512, 424, 3), np.uint8)  # blank im ge if the frame don#t exists
 
-    for i in range(0, file_count):
+    for i in range(1, file_count):
         file_name = folder_name + "/1_" + str(i) + ".hdf"
-        print(file_name)
+        print("open file" + "/1_" + str(i))
         # %% open the hdf file and its sup_parts
         try:  # some hdf files don#t open
             f = h5.File(file_name, "r")
