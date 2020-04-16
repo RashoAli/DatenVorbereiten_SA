@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math
 import cv2
 
-folder_name = "E_vonHinten_ohneSchulterstütze_registered"
+folder_name = "E_vonHinten_ohneSchulterstütze"
 path, dirs, files = next(os.walk(folder_name))
 file_count = len(files)
 
