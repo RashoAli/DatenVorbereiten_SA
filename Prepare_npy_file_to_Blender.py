@@ -1,14 +1,15 @@
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 
-def FilterPoseData(npy_dir, saveToPath):
-    data = np.load(str(npy_dir + ".npy"))
-    np.save(saveToPath, data)
+def FilterPoseData(data_name):
+    npy_dir = os.path.join("extractedData", data_name, "ir.npy")
+    data = np.load(npy_dir)
+    plt.imshow(data[0,:,:])
+    plt.show()
 
 
 if __name__ == '__main__':
-    npy_data = "E_vonHinten_ohneSchulterstütze"
-    npy_dir = os.path.join("npyFiles", npy_data)
-    saveToPath = os.path.join("npyFilesFiltered", npy_data)
-    FilterPoseData(npy_dir, saveToPath)
+    data_name = "E_vonHinten_ohneSchulterstütze"
+    FilterPoseData(data_name)

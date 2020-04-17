@@ -4,33 +4,35 @@ import numpy as np
 import cv2
 
 
-def Open_hdf_get_video(folder_name, saveToPath):
+def ExtractDataFrom_hdf(data_name):
+    #  ich habe einene folder mit der name hdfFiles wo ich die hdf daten schpeichere.
+    #  der data_name muss den gleichne name wie der hdf folder sein
+
+    folder_name = os.path.join("hdfFiles", data_name)  # hdf folder path
+    saveToPath = os.path.join("extractedData", data_name)  # video save to path
+
+    #  anzahl der daten in hdfFiles
     path, dirs, files = next(os.walk(folder_name))
     file_count = len(files)
 
-    depth_array = np.zeros((512, 424, file_count))
-    ir_array = np.zeros((512, 424, file_count))
+    depth_array = []
+    ir_array = []
     registered_array = []
 
-    blank_image = np.zeros((512, 424, 3), np.uint8)  # blank im ge if the frame don#t exists
+    blank_image = np.zeros((512, 424, 3), np.uint8)  # blank image if the frame don't exists
 
     for i in range(0, file_count):
-        file_name = folder_name + "/1_" + str(i) + ".hdf"
+        file_name = os.path.join(folder_name, "1_" + str(i) + ".hdf")
         print(file_name)
         # %% open the hdf file and its sup_parts
-        try:  # some hdf files don#t open
+        try:  # some hdf files don't open
             f = h5.File(file_name, "r")
-
             # %% initial the sup_parts
             try:  # depth and ir data have to be int and 0->255
                 MetaData = f['LabelData']['MetaData']
                 color = f['SensorData']['color']
                 depth = f['SensorData']['depth']
                 ir = f['SensorData']['ir']
-
-                ir_array[:, :, i] = ir
-                depth_array[:, :, i] = depth
-
                 registered = f['SensorData']['registered']
 
                 # get image size
@@ -38,12 +40,16 @@ def Open_hdf_get_video(folder_name, saveToPath):
                 size = (width, height)
 
                 # convert the data to array so later convert them cv2 format
+                ir_np = np.asarray(ir)
+                depth_np = np.asarray(depth)
                 array_registered = np.asarray(registered)
 
                 # convert data to cv2 format
                 cv2_registered = cv2.cvtColor(array_registered, cv2.COLOR_BGR2RGB)
 
                 # append data to te list
+                ir_array.append(ir_np)
+                depth_array.append(depth_np)
                 registered_array.append(cv2_registered)
             except:  # if the image don't exists put a blankImage to have the wright number of frames
                 print("jumped frame", i)
@@ -52,9 +58,19 @@ def Open_hdf_get_video(folder_name, saveToPath):
             print("file cant be opened", file_name)
             registered_array.append(blank_image)
 
-    np.save(str(saveToPath[:-4] + '_ir.npy'), ir_array)
-    np.save(str(saveToPath[:-4] + '_depth.npy'), depth_array)
-    out_registered = cv2.VideoWriter(saveToPath, cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+    #  make sure that the path exist
+    if not os.path.exists("extractedData"):
+        os.mkdir("extractedData")
+    if not os.path.exists(saveToPath):
+        os.mkdir(saveToPath)
+
+    save_To_ir_path = os.path.join(saveToPath, 'ir.npy')
+    save_To_depth_path = os.path.join(saveToPath, 'depth.npy')
+    save_To_color_path = os.path.join(saveToPath, 'color.avi')
+
+    np.save(save_To_ir_path, ir_array)
+    np.save(save_To_depth_path, depth_array)
+    out_registered = cv2.VideoWriter(save_To_color_path, cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
     for i in range(len(registered_array)):
         image = cv2.cvtColor(registered_array[i], cv2.COLOR_BGR2RGB)
         out_registered.write(image)
@@ -63,6 +79,5 @@ def Open_hdf_get_video(folder_name, saveToPath):
 
 
 if __name__ == "__main__":
-    folder_name = "E_vonHinten_mitSchulterstütze"
-    saveToPath = str("extractedData/" + folder_name + '_registered.avi')
-    Open_hdf_get_video(folder_name, saveToPath)
+    data_name = "E_vonHinten_mitSchulterstütze"
+    ExtractDataFrom_hdf(data_name)
