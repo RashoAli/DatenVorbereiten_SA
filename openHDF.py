@@ -8,8 +8,8 @@ def Open_hdf_get_video(folder_name, saveToPath):
     path, dirs, files = next(os.walk(folder_name))
     file_count = len(files)
 
-    depth_array = []
-    ir_array = []
+    depth_array = np.zeros((512, 424, file_count))
+    ir_array = np.zeros((512, 424, file_count))
     registered_array = []
 
     blank_image = np.zeros((512, 424, 3), np.uint8)  # blank im ge if the frame don#t exists
@@ -27,6 +27,10 @@ def Open_hdf_get_video(folder_name, saveToPath):
                 color = f['SensorData']['color']
                 depth = f['SensorData']['depth']
                 ir = f['SensorData']['ir']
+
+                ir_array[:, :, i] = ir
+                depth_array[:, :, i] = depth
+
                 registered = f['SensorData']['registered']
 
                 # get image size
@@ -48,6 +52,8 @@ def Open_hdf_get_video(folder_name, saveToPath):
             print("file cant be opened", file_name)
             registered_array.append(blank_image)
 
+    np.save(str(saveToPath[:-4] + '_ir.npy'), ir_array)
+    np.save(str(saveToPath[:-4] + '_depth.npy'), depth_array)
     out_registered = cv2.VideoWriter(saveToPath, cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
     for i in range(len(registered_array)):
         image = cv2.cvtColor(registered_array[i], cv2.COLOR_BGR2RGB)
@@ -58,5 +64,5 @@ def Open_hdf_get_video(folder_name, saveToPath):
 
 if __name__ == "__main__":
     folder_name = "E_vonHinten_mitSchulterstütze"
-    saveToPath = str("extractedVideos/" + folder_name + '_registered.avi')
+    saveToPath = str("extractedData/" + folder_name + '_registered.avi')
     Open_hdf_get_video(folder_name, saveToPath)
