@@ -6,11 +6,11 @@ import cv2
 
 def ExtractDataFrom_hdf(data_name):
     #  ich habe einene folder mit der name hdfFiles wo ich die hdf daten schpeichere.
-    #  der data_name muss den gleichne name wie der hdf folder sein
+    #  der E_von vorne ohne Schulterstütze muss den gleichne name wie der hdf folder sein
 
     folder_name = os.path.join("hdfFiles", data_name)  # hdf folder path
     saveToPath = os.path.join("extractedData", data_name)  # video save to path
-
+    print(folder_name)
     #  anzahl der daten in hdfFiles
     path, dirs, files = next(os.walk(folder_name))
     file_count = len(files)
@@ -64,9 +64,9 @@ def ExtractDataFrom_hdf(data_name):
     if not os.path.exists(saveToPath):
         os.mkdir(saveToPath)
 
-    save_To_ir_path = os.path.join(saveToPath, 'ir.npy')
-    save_To_depth_path = os.path.join(saveToPath, 'depth.npy')
-    save_To_color_path = os.path.join(saveToPath, 'color.avi')
+    save_To_ir_path = os.path.join(saveToPath, data_name+'ir.npy')
+    save_To_depth_path = os.path.join(saveToPath, data_name+'depth.npy')
+    save_To_color_path = os.path.join(saveToPath, data_name+'color.avi')
 
     np.save(save_To_ir_path, ir_array)
     np.save(save_To_depth_path, depth_array)
@@ -79,5 +79,5 @@ def ExtractDataFrom_hdf(data_name):
 
 
 if __name__ == "__main__":
-    data_name = "E_vonHinten_mitSchulterstütze"
+    data_name = "E_von vorne ohne Schulterstütze"
     ExtractDataFrom_hdf(data_name)

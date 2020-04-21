@@ -4,12 +4,13 @@ import matplotlib.pyplot as plt
 
 
 def FilterPoseData(data_name):
-    npy_dir = os.path.join("extractedData", data_name, "ir.npy")
+    npy_dir = os.path.join("extractedData", data_name+".npy")
     data = np.load(npy_dir)
-    plt.imshow(data[0,:,:])
+    data = np.asarray(data)
+    print(data[:,0])
     plt.show()
 
 
 if __name__ == '__main__':
-    data_name = "E_vonHinten_ohneSchulterstütze"
+    data_name = "E_von vorne ohne Schulterstütze"
     FilterPoseData(data_name)

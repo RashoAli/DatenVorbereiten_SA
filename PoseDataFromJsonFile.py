@@ -43,13 +43,15 @@ def XYZ_Of_Joints_saveIn_npy(hdf_path, json_path, npy_dir):
             depth_array = np.asarray(depth)
             array = np.zeros(18 * 3)
             for j in range(0, 18):
+                f = 525.5
                 pixel_x = data_array[2 * j, i]
                 pixel_y = data_array[2 * j + 1, i]
-                world_Z = depth_array[int(pixel_x), int(pixel_y)]
+                D = depth_array[int(pixel_x), int(pixel_y)]
 
-                focalLength = 200
-                world_X = world_Z * pixel_x / focalLength
-                world_Y = world_Z * pixel_y / focalLength
+                world_Z = D * f / np.sqrt(pixel_x * pixel_x + pixel_y * pixel_y + f * f)
+                world_X = world_Z * pixel_x / f
+                world_Y = world_Z * pixel_y / f
+
                 array[j * 3] = int(world_X)
                 array[j * 3 + 1] = int(world_Y)
                 array[j * 3 + 2] = int(world_Z)
@@ -64,9 +66,10 @@ def XYZ_Of_Joints_saveIn_npy(hdf_path, json_path, npy_dir):
 
 if __name__ == '__main__':
     # define folder path
-    video_name = "E_vonHinten_ohneSchulterstütze_registered"
-    hdf_name = "E_vonHinten_ohneSchulterstütze"
+    video_name = "E_von vorne ohne Schulterstütze"
+    hdf_name = "E_von vorne ohne Schulterstütze"
     json_path = os.path.join("JsonFiles", video_name, "*.json")
     hdf_path = os.path.join("hdfFiles", hdf_name)
-    npy_dir = os.path.join("npyFiles", hdf_name)
+    npy_dir = os.path.join("extractedData", hdf_name)
+
     XYZ_Of_Joints_saveIn_npy(hdf_path, json_path, npy_dir)

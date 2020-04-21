@@ -21,4 +21,4 @@ print(command_line)
 # XYZ_Of_Joints_saveIn_npy(hdf_folder_name, json_path, npy_dir)
 
 # filter the data and Prepare for Blender
-# FilterPoseData(data_name)
+# FilterPoseData(E_von vorne ohne Schulterstütze)
